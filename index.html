@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>新品便利店尝鲜｜就近门店查询</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif;}
+body{background:#f8f9fa;color:#222;padding-bottom:80px;}
+.banner{background:linear-gradient(135deg,#4285f4,#5c6bc0);color:#fff;padding:40px 20px;text-align:center;}
+.banner h1{font-size:24px;margin-bottom:8px;}
+.banner p{opacity:0.9;font-size:15px;}
+.container{max-width:520px;margin:0 auto;padding:20px;}
+.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 12px #00000010;}
+.card h2{font-size:18px;margin-bottom:12px;}
+.desc{color:#555;font-size:15px;line-height:1.6;margin-bottom:16px;}
+.btn{display:block;width:100%;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:bold;margin-bottom:12px;cursor:pointer;transition:0.2s;}
+.btn-primary{background:#4285f4;color:#fff;}
+.btn-success{background:#34a853;color:#fff;}
+.btn-secondary{background:#eeeeee;color:#222;}
+.btn:active{opacity:0.85;}
+.store-list{display:none;margin-top:12px;padding:12px;background:#f1f5ff;border-radius:12px;}
+.store-item{padding:8px 0;border-bottom:1px solid #dde6fc;}
+.store-item:last-child{border-bottom:none;}
+.coupon-box{display:none;margin-top:12px;padding:16px;border:2px dashed #34a853;border-radius:12px;text-align:center;}
+.coupon-code{font-size:20px;font-weight:bold;color:#34a853;margin:8px 0;}
+.koc-item{padding:10px 0;border-bottom:1px solid #eee;}
+.koc-item:last-child{border-bottom:none;}
+.foot-tip{text-align:center;color:#777;font-size:13px;margin-top:20px;padding:0 10px;}
+</style>
+</head>
+<body>
+<div class="banner">
+    <h1>新品便利店上新 · 7天尝鲜活动</h1>
+    <p>客单价 ¥15｜就近便利店直接购买</p>
+</div>
+<div class="container">
+    <div class="card">
+        <h2>✨ 新品亮点</h2>
+        <p class="desc">城市便利店全新上架！刷到达人种草、广告推荐，一键查询附近有售门店，到店解锁首购福利。</p>
+        <button class="btn btn-primary" id="btnFindStore">📍 查询附近售卖门店</button>
+        <div class="store-list" id="storePanel">
+            <div class="store-item">✅ 好邻居便利店（朝阳路店）｜距离 420m｜有货</div>
+            <div class="store-item">✅ 7-11（光华路店）｜距离 800m｜有货</div>
+            <div class="store-item">✅ 罗森（慈云寺店）｜距离 1.1km｜有货</div>
+            <p style="margin-top:8px;font-size:13px;color:#666;">*模拟门店列表，正式版接入LBS定位+导航</p>
+        </div>
+
+        <button class="btn btn-success" id="btnGetCoupon">🎁 领取到店尝鲜福利</button>
+        <div class="coupon-box" id="couponPanel">
+            <p>尝鲜凭证（截图出示给店员）</p>
+            <div class="coupon-code">CX2026110601</div>
+            <p style="font-size:13px;color:#666;">活动有效期7天，单用户限领1次</p>
+        </div>
+
+        <button class="btn btn-secondary" id="btnShare">🔗 打卡分享给好友</button>
+    </div>
+
+    <div class="card">
+        <h2>💬 KOC真实种草</h2>
+        <div class="koc-item">KOC阿圆：下班逛便利店随手买到，15元很适合日常！</div>
+        <div class="koc-item">KOC小泽：味道在线，楼下便利店就能拿下，不用网购等快递</div>
+        <div class="koc-item">KOC晚晚：已经推荐给同事，顺路就能尝鲜～</div>
+    </div>
+
+    <div class="card">
+        <h2>📋 小调研（帮我们优化）</h2>
+        <p class="desc">你从哪个渠道看到本次新品？</p>
+        <label style="display:block;padding:6px 0;"><input type="radio" name="src" value="达人短视频"> 达人/KOC短视频</label>
+        <label style="display:block;padding:6px 0;"><input type="radio" name="src" value="信息流广告"> 信息流广告</label>
+        <label style="display:block;padding:6px 0;"><input type="radio" name="src" value="热搜"> 平台热搜</label>
+        <br>
+        <button class="btn btn-secondary" id="btnSubmitSurvey">提交反馈</button>
+    </div>
+
+    <div class="foot-tip">
+        活动说明：模拟营销作业落地页｜正式版本增加GPS定位、导航跳转、后端数据统计<br>
+        所有数据点击埋点在浏览器控制台查看
+    </div>
+</div>
+
+<script>
+// 简易埋点函数（转化岗指标统计）
+function track(eventName){
+    const time = new Date().toLocaleString();
+    console.log(`【埋点事件】${eventName} | 时间：${time}`);
+}
+
+const btnFindStore = document.getElementById('btnFindStore');
+const storePanel = document.getElementById('storePanel');
+const btnGetCoupon = document.getElementById('btnGetCoupon');
+const couponPanel = document.getElementById('couponPanel');
+const btnShare = document.getElementById('btnShare');
+const btnSubmitSurvey = document.getElementById('btnSubmitSurvey');
+
+btnFindStore.onclick = function(){
+    track("点击：查询门店");
+    storePanel.style.display = storePanel.style.display === 'block' ? 'none' : 'block';
+};
+btnGetCoupon.onclick = function(){
+    track("点击：领取尝鲜券");
+    couponPanel.style.display = couponPanel.style.display === 'block' ? 'none' : 'block';
+};
+btnShare.onclick = function(){
+    track("点击：打卡分享");
+    if(navigator.share){
+        navigator.share({
+            title:"新品便利店尝鲜",
+            text:"楼下便利店上新啦，一起来尝鲜！",
+            url:window.location.href
+        }).catch(()=>{});
+    }else{
+        alert("复制链接分享："+window.location.href);
+    }
+};
+btnSubmitSurvey.onclick = function(){
+    track("点击：提交调研问卷");
+    alert("感谢你的反馈！");
+};
+</script>
+</body>
+</html>
